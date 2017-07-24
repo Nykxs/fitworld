@@ -104,18 +104,15 @@ func (h *userHandler) Me(c echo.Context) error {
 
 // Delete endpoint validates parameters and calls the UserService trying to delete the current user.
 func (h *userHandler) Delete(c echo.Context) error {
-	payload := UserGetPayload{
-		ID: c.Param("id"),
+	IDStored := c.Get(ContextKeyCurrentUser)
+	ID, ok := IDStored.(string)
+	if !ok || ID == "" {
+		return c.JSON(http.StatusUnauthorized, nil)
 	}
 
-	validator := httpvalidator.NewValidator()
-	if err := validator.Validate(payload); err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-
-	err := h.userService.Delete(payload.ID)
+	err := h.userService.Delete(ID)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
-	return c.JSON(http.StatusOK, "{}")
+	return c.JSON(http.StatusOK, nil)
 }
