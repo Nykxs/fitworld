@@ -22,11 +22,14 @@ func RegisterUserHandler(s *Server) {
 	usersGroup := s.Router.Group("/users")
 
 	usersGroup.POST("/register", userHandler.Register)
-	usersGroup.GET("/me", userHandler.Me)
 	usersGroup.GET("/:id", userHandler.Get)
+
+	// Endpoints related to the current user - should be registered.
+	usersGroup.GET("/me", userHandler.Me)
 	usersGroup.GET("/me/delete", userHandler.Delete)
 }
 
+// UserRegisterPayload can be Bind in the Register endpoint and defines parameters that are both received and validated
 type UserRegisterPayload struct {
 	FirstName string `json:"first_name" form:"firstname" query:"firstname"`
 	LastName  string `json:"last_name" form:"firstname" query:"firstname"`
@@ -60,6 +63,7 @@ func (h *userHandler) Register(c echo.Context) error {
 	return c.JSON(http.StatusCreated, stored)
 }
 
+// UserGetPayload can be Bind in the Get endpoint and defines parameters that are both received and validated
 type UserGetPayload struct {
 	ID string `json:"id" valid:"required"`
 }
