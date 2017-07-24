@@ -2,6 +2,7 @@ package fitworld
 
 // User defines fields that can be filled for a user.
 type User struct {
+	ID        string `json:"id"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Age       int    `json:"age"`
@@ -21,6 +22,8 @@ type UserRegister struct {
 // UserService defines the behaviour that should be implemented by each object that want to manage users.
 type UserService interface {
 	Register(*UserRegister) (*User, error)
-	Get(string) (*User, error)
-	Delete(string) error
+	MatchPassword(email string, password string) (bool, error)
+	GetByID(id string) (*User, error)
+	GetByEmail(email string) (*User, error)
+	Delete(id string) error
 }

@@ -12,8 +12,9 @@ import (
 
 // Server defines the object that will manage all the HTTP stuff (Endpoints, router...)
 type Server struct {
-	Router      *echo.Echo
-	UserService fitworld.UserService
+	Router         *echo.Echo
+	UserService    fitworld.UserService
+	SessionService fitworld.SessionService
 }
 
 // NewServer returns a Server up to run with fields initialized.
