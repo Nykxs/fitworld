@@ -88,7 +88,18 @@ func (h *userHandler) Get(c echo.Context) error {
 
 // Me endpoint validates parameters and calls the UserService trying to get info for the current user.
 func (h *userHandler) Me(c echo.Context) error {
-	return nil
+	IDStored := c.Get(ContextKeyCurrentUser)
+	ID, ok := IDStored.(string)
+	if !ok || ID == "" {
+		return c.JSON(http.StatusUnauthorized, nil)
+	}
+
+	user, err := h.userService.GetByID(ID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, nil)
+	}
+
+	return c.JSON(http.StatusOK, user)
 }
 
 // Delete endpoint validates parameters and calls the UserService trying to delete the current user.

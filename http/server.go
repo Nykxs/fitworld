@@ -10,6 +10,10 @@ import (
 	"github.com/nykxs/fitworld"
 )
 
+const (
+	ContextKeyCurrentUser = "currentUser"
+)
+
 // Server defines the object that will manage all the HTTP stuff (Endpoints, router...)
 type Server struct {
 	Router         *echo.Echo
@@ -30,8 +34,11 @@ func (s *Server) Setup() error {
 	s.Router.Logger.SetLevel(log.INFO)
 
 	// Register middleware here too.
+	// RegisterMiddlewares(s)
+
 	// Register endpoints in this function.
 	RegisterUserHandler(s)
+	RegisterSessionHandler(s)
 
 	return nil
 }
