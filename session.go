@@ -1,7 +1,12 @@
 package fitworld
 
 import (
+	"errors"
 	"time"
+)
+
+var (
+	ErrSessionNotFound = errors.New("session not found")
 )
 
 // Session defines fields that are used to manipulate a session.

@@ -1,5 +1,11 @@
 package fitworld
 
+import "errors"
+
+var (
+	ErrUserNotFound = errors.New("user not found")
+)
+
 // User defines fields that can be filled for a user.
 type User struct {
 	ID        string `json:"id"`

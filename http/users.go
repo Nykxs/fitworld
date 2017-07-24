@@ -79,7 +79,7 @@ func (h *userHandler) Get(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	user, err := h.userService.Get(payload.ID)
+	user, err := h.userService.GetByID(payload.ID)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}

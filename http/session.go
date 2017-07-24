@@ -45,7 +45,7 @@ type SessionLoginPayload struct {
 func (h *sessionHandler) Login(c echo.Context) error {
 	payload := new(SessionLoginPayload)
 	if err := c.Bind(payload); err != nil {
-		return err
+		return c.JSON(http.StatusBadRequest, nil)
 	}
 
 	validator := httpvalidator.NewValidator()
@@ -58,12 +58,15 @@ func (h *sessionHandler) Login(c echo.Context) error {
 
 	user, err := h.userService.GetByEmail(payload.Email)
 	if err != nil {
-		return err
+		if err == fitworld.ErrUserNotFound {
+			return c.JSON(http.StatusBadRequest, nil)
+		}
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	session, err := h.sessionService.CreateSession(user.ID)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	// Set Cookie
@@ -83,18 +86,21 @@ func (h *sessionHandler) Login(c echo.Context) error {
 func (h *sessionHandler) Logout(c echo.Context) error {
 	cookie, err := c.Cookie(CookieSession)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusBadRequest, nil)
 	}
 
 	session, err := h.sessionService.GetSession(cookie.Value)
 	if err != nil {
-		return err
+		if err == fitworld.ErrSessionNotFound {
+			return c.JSON(http.StatusBadRequest, nil)
+		}
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	// @TODO : Check currentuser.ID and compare with session.userID
 
 	if err := h.sessionService.DeleteSession(session.ID); err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	cookie.Expires = time.Now()
