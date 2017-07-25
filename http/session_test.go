@@ -93,3 +93,53 @@ func TestLoginNotFound(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, rec.Code)
 	}
 }
+
+func TestLogout(t *testing.T) {
+	e := echo.New()
+	req := httptest.NewRequest(echo.GET, "/", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.Set(ContextKeyCurrentUser, &fitworld.User{
+		Email:    "johndoe@mail.com",
+		Password: "123abc",
+	})
+	c.Request().AddCookie(&http.Cookie{
+		Name:  CookieSession,
+		Value: "session-id",
+		Path:  "/",
+	})
+
+	mockUser := mock.NewUserService()
+	mockUser.GetByEmailFn = func(email string) (*fitworld.User, error) {
+		user, ok := mockUser.DB[email]
+		if !ok {
+			return nil, fitworld.ErrUserNotFound
+		}
+		return user, nil
+	}
+
+	mockSession := mock.NewSessionService()
+
+	mockSession.GetSessionFn = func(userID string) (*fitworld.Session, error) {
+		return &fitworld.Session{
+			ID:     "session-id",
+			UserID: "user-id",
+		}, nil
+	}
+
+	mockSession.DeleteSessionFn = func(userID string) error {
+		return nil
+	}
+
+	handler := &sessionHandler{
+		userService:    mockUser,
+		sessionService: mockSession,
+	}
+
+	if assert.NoError(t, handler.Logout(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.True(t, mockSession.GetSessionInvoked)
+		assert.True(t, mockSession.DeleteSessionInvoked)
+	}
+}

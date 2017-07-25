@@ -9,10 +9,10 @@ var (
 // User defines fields that can be filled for a user.
 type User struct {
 	ID        string `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Age       int    `json:"age"`
-	Gender    string `json:"gender"`
+	FirstName string `json:"first_name,omitempty"`
+	LastName  string `json:"last_name,omitempty"`
+	Age       int    `json:"age,omitempty"`
+	Gender    string `json:"gender,omitempty"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 }

@@ -33,7 +33,7 @@ func RegisterUserHandler(s *Server) {
 type UserRegisterPayload struct {
 	FirstName string `json:"first_name" form:"firstname" query:"firstname"`
 	LastName  string `json:"last_name" form:"firstname" query:"firstname"`
-	Email     string `json:"email" form:"email" query:"email" valid:"required"`
+	Email     string `json:"email" form:"email" query:"email" valid:"required,email"`
 	Password  string `json:"password" form:"password" query:"password" valid:"required"`
 }
 
@@ -81,6 +81,9 @@ func (h *userHandler) Get(c echo.Context) error {
 
 	user, err := h.userService.GetByID(payload.ID)
 	if err != nil {
+		if err == fitworld.ErrUserNotFound {
+			return c.JSON(http.StatusBadRequest, nil)
+		}
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 	return c.JSON(http.StatusOK, user)

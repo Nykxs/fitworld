@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -86,6 +87,7 @@ func (h *sessionHandler) Login(c echo.Context) error {
 func (h *sessionHandler) Logout(c echo.Context) error {
 	cookie, err := c.Cookie(CookieSession)
 	if err != nil {
+		fmt.Println("Here ?")
 		return c.JSON(http.StatusBadRequest, nil)
 	}
 
