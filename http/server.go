@@ -17,6 +17,7 @@ const (
 // Server defines the object that will manage all the HTTP stuff (Endpoints, router...)
 type Server struct {
 	Router         *echo.Echo
+	Middlewares    *middlewaresHandler
 	UserService    fitworld.UserService
 	SessionService fitworld.SessionService
 }
