@@ -7,17 +7,21 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
 
+	"github.com/labstack/echo/middleware"
 	"github.com/nykxs/fitworld"
 )
 
 const (
+	// ContextKeyCurrentUser defines the name of the key in our echo.Context to get CurrentUser if any
 	ContextKeyCurrentUser = "currentUser"
+	// CookieSession defines the name of the cookie that is created for each user's session
+	CookieSession = "session"
 )
 
 // Server defines the object that will manage all the HTTP stuff (Endpoints, router...)
 type Server struct {
 	Router         *echo.Echo
-	Middlewares    *middlewaresHandler
+	Middlewares    *middlewares
 	UserService    fitworld.UserService
 	SessionService fitworld.SessionService
 }
@@ -34,8 +38,15 @@ func NewServer(u fitworld.UserService) *Server {
 func (s *Server) Setup() error {
 	s.Router.Logger.SetLevel(log.INFO)
 
-	// Register middleware here too.
-	// RegisterMiddlewares(s)
+	// Register middlewares.
+	RegisterMiddlewares(s)
+
+	// Defines middlewares we'll use in all our endpoints
+	// First middleware should be a recover one
+	// Second middleware should be a error handler one that , following the returned error, will format it
+	s.Router.Use(middleware.Logger())
+	s.Router.Use(middleware.RequestID())
+	s.Router.Use(s.Middlewares.Auth)
 
 	// Register endpoints in this function.
 	RegisterUserHandler(s)

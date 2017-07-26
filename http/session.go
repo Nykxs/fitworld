@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -9,11 +8,6 @@ import (
 
 	"github.com/nykxs/fitworld"
 	"github.com/nykxs/fitworld/http/validator"
-)
-
-const (
-	// CookieSession defines the name of the cookie that is created for each user's session
-	CookieSession = "session"
 )
 
 type sessionHandler struct {
@@ -87,7 +81,6 @@ func (h *sessionHandler) Login(c echo.Context) error {
 func (h *sessionHandler) Logout(c echo.Context) error {
 	cookie, err := c.Cookie(CookieSession)
 	if err != nil {
-		fmt.Println("Here ?")
 		return c.JSON(http.StatusBadRequest, nil)
 	}
 
