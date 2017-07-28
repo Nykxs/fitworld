@@ -34,19 +34,34 @@ func NewServer(u fitworld.UserService) *Server {
 	}
 }
 
-// Setup function register both middlewares and http endpoints into the server in order to be exposed will Start function is called.
-func (s *Server) Setup() error {
-	s.Router.Logger.SetLevel(log.INFO)
-
+// SetupMiddlewares is the function called during the setup process of our server with, for objective, to handle everything related to middlewares.
+func (s *Server) SetupMiddlewares() error {
 	// Register middlewares.
 	RegisterMiddlewares(s)
 
 	// Defines middlewares we'll use in all our endpoints
 	// First middleware should be a recover one
 	// Second middleware should be a error handler one that , following the returned error, will format it
+
+	// Logger middleware
 	s.Router.Use(middleware.Logger())
+	s.Router.Logger.SetLevel(log.INFO)
+
+	// RequestID middleware that generate a unique RequestID for each request received.
 	s.Router.Use(middleware.RequestID())
+
+	// Custom - Auth middleware that will, for each request, try to obtain the currentUser if any.
 	s.Router.Use(s.Middlewares.Auth)
+
+	return nil
+}
+
+// Setup function register both middlewares and http endpoints into the server in order to be exposed will Start function is called.
+func (s *Server) Setup() error {
+
+	if err := s.SetupMiddlewares(); err != nil {
+		return err
+	}
 
 	// Register endpoints in this function.
 	RegisterUserHandler(s)
