@@ -99,6 +99,9 @@ func (h *userHandler) Me(c echo.Context) error {
 
 	user, err := h.userService.GetByID(ID)
 	if err != nil {
+		if err == fitworld.ErrUserNotFound {
+			return c.JSON(http.StatusNotFound, nil)
+		}
 		return c.JSON(http.StatusInternalServerError, nil)
 	}
 
