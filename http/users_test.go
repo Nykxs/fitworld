@@ -39,7 +39,7 @@ func TestRegisterUser(t *testing.T) {
 		}
 
 		mockUser.DB[stored.Email] = stored
-		return stored, nil
+		return nil, nil
 	}
 
 	handler := &userHandler{
@@ -69,7 +69,7 @@ func TestRegisterUserInvalidEmailPayload(t *testing.T) {
 		}
 
 		mockUser.DB[stored.Email] = stored
-		return stored, nil
+		return nil, nil
 	}
 
 	handler := &userHandler{
@@ -99,7 +99,7 @@ func TestRegisterUserInvalidPasswordPayload(t *testing.T) {
 		}
 
 		mockUser.DB[stored.Email] = stored
-		return stored, nil
+		return nil, nil
 	}
 
 	handler := &userHandler{
