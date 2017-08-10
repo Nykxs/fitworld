@@ -3,6 +3,8 @@ package http
 import (
 	"net/http"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/labstack/echo"
 
 	"github.com/nykxs/fitworld"
@@ -49,18 +51,23 @@ func (h *userHandler) Register(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
+	password, err := bcrypt.GenerateFromPassword([]byte(payload.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
 	user := fitworld.UserRegister{
 		FirstName: payload.FirstName,
 		LastName:  payload.LastName,
 		Email:     payload.Email,
-		Password:  payload.Password,
+		Password:  string(password),
 	}
 
-	stored, err := h.userService.Register(&user)
+	_, err = h.userService.Register(&user)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
-	return c.JSON(http.StatusCreated, stored)
+	return c.NoContent(http.StatusCreated)
 }
 
 // UserGetPayload can be Bind in the Get endpoint and defines parameters that are both received and validated
