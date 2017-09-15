@@ -30,7 +30,7 @@ func RegisterSessionHandler(s *Server) {
 
 // SessionLoginPayload defines fields that should be sent to the Login endpoint to use it.
 type SessionLoginPayload struct {
-	Email    string `json:"email" form:"email" query:"email" valid:"required.email"`
+	Email    string `json:"email" form:"email" query:"email" valid:"required,email"`
 	Password string `json:"password" form:"password" query:"password" valid:"required"`
 }
 

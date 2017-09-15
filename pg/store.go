@@ -20,6 +20,10 @@ func NewStore(url string) (*Store, error) {
 		return nil, err
 	}
 
+	if err := db.Ping(); err != nil {
+		return nil, err
+	}
+
 	return &Store{
 		DB: db,
 	}, nil

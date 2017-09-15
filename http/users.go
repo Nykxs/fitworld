@@ -43,7 +43,7 @@ type UserRegisterPayload struct {
 func (h *userHandler) Register(c echo.Context) error {
 	payload := new(UserRegisterPayload)
 	if err := c.Bind(payload); err != nil {
-		return err
+		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	validator := httpvalidator.NewValidator()
@@ -77,8 +77,9 @@ type UserGetPayload struct {
 
 // Get endpoint validates parameters and calls the UserService trying to get the user associated with an id.
 func (h *userHandler) Get(c echo.Context) error {
-	payload := UserGetPayload{
-		ID: c.Param("id"),
+	payload := new(UserGetPayload)
+	if err := c.Bind(payload); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	validator := httpvalidator.NewValidator()
@@ -127,5 +128,6 @@ func (h *userHandler) Delete(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
+
 	return c.JSON(http.StatusOK, nil)
 }

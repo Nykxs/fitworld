@@ -58,7 +58,6 @@ func (s *Server) SetupMiddlewares() error {
 
 // Setup function register both middlewares and http endpoints into the server in order to be exposed will Start function is called.
 func (s *Server) Setup() error {
-
 	if err := s.SetupMiddlewares(); err != nil {
 		return err
 	}
@@ -72,15 +71,18 @@ func (s *Server) Setup() error {
 
 // Start runs the server and start to expose http endpoints.
 func (s *Server) Start() error {
-	if err := s.Router.Start(":8000"); err != nil {
-		s.Router.Logger.Warn(err)
-		return err
-	}
+	s.Router.Logger.Info("[SERVER] Start...")
+	go func() {
+		if err := s.Router.Start(":8000"); err != nil {
+			s.Router.Logger.Warn(err)
+		}
+	}()
 	return nil
 }
 
 // Stop tries to stop the server as gracefully as possible.
 func (s *Server) Stop() error {
+	s.Router.Logger.Info("[SERVER] Stop...")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := s.Router.Shutdown(ctx); err != nil {

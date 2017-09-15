@@ -6,6 +6,7 @@ import (
 
 // Validator implements our validator domain interface.
 // It is used by each http endpoint to validate received parameters.
+// Improvements : the Validator struct can be improved with fields to have a better error handling.
 type Validator struct {
 }
 
